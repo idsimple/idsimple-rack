@@ -1,11 +1,12 @@
 require "rack"
-require "idsimple/rack/access_token_helper"
 require "idsimple/rack/access_token_validator"
-require "idsimple/rack/api"
+require "idsimple/rack/helper"
 
 module Idsimple
   module Rack
     class AuthenticatorApp
+      extend Idsimple::Rack::Helper
+
       UNAUTHORIZED_RESPONSE = ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]].freeze
 
       def self.call(env)
@@ -42,29 +43,6 @@ module Idsimple
       rescue JWT::DecodeError => e
         logger.info("Error while decoding token: #{e.class} - #{e.message}")
         UNAUTHORIZED_RESPONSE
-      end
-
-      def self.configuration
-        Idsimple::Rack.configuration
-      end
-
-      def self.logger
-        configuration.logger
-      end
-
-      def self.signing_secret
-        configuration.signing_secret
-      end
-
-      def self.decode_access_token(access_token, signing_secret)
-        AccessTokenHelper.decode(access_token, signing_secret, {
-          iss: configuration.issuer,
-          aud: configuration.app_id
-        })
-      end
-
-      def self.api
-        @api ||= Idsimple::Rack::Api.new(configuration.api_base_url)
       end
     end
   end
