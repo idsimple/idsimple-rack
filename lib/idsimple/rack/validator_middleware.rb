@@ -17,7 +17,7 @@ module Idsimple
       end
 
       def call(env)
-        req = Rack::Request.new(env)
+        req = ::Rack::Request.new(env)
 
         if (req.path == configuration.authenticate_path) || (skip_on && skip_on.call(req))
           return app.call(env)
@@ -54,7 +54,7 @@ module Idsimple
           new_decoded_access_token = decode_access_token(new_access_token, signing_secret)
           env[ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
           status, headers, body = app.call(env)
-          res = Rack::Response.new(body, status, headers)
+          res = ::Rack::Response.new(body, status, headers)
           set_access_token.call(env, res, new_access_token, new_decoded_access_token)
           res.finish
         end

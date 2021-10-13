@@ -1,5 +1,5 @@
-require "logger"
 require "rack"
+require "logger"
 
 module Idsimple
   module Rack
@@ -30,7 +30,7 @@ module Idsimple
       end
 
       def default_access_token_getter(env)
-        req = Rack::Request.new(env)
+        req = ::Rack::Request.new(env)
         req.cookies[DEFAULT_COOKIE_NAME]
       end
 
