@@ -1,5 +1,7 @@
 require "idsimple/rack/version"
 require "idsimple/rack/configuration"
+require "idsimple/rack/validator_middleware"
+require "idsimple/rack/authenticator_app"
 require "idsimple/rack/railtie" if defined?(::Rails)
 
 module Idsimple
