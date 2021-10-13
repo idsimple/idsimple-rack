@@ -37,11 +37,11 @@ module Idsimple
           configuration.set_access_token.call(env, res, new_access_token, new_decoded_access_token)
           res.finish
         else
-          return UNAUTHORIZED_RESPONSE
+          UNAUTHORIZED_RESPONSE
         end
       rescue JWT::DecodeError => e
         logger.info("Error while decoding token: #{e.class} - #{e.message}")
-        return UNAUTHORIZED_RESPONSE
+        UNAUTHORIZED_RESPONSE
       end
 
       def self.configuration
