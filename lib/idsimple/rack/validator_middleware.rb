@@ -19,7 +19,7 @@ module Idsimple
       def call(env)
         req = ::Rack::Request.new(env)
 
-        if (req.path == configuration.authenticate_path) || (skip_on && skip_on.call(req))
+        if (req.path == configuration.authenticate_path) || (configuration.skip_on && configuration.skip_on.call(req))
           return app.call(env)
         end
 
