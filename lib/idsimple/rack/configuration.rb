@@ -4,6 +4,8 @@ require "rack"
 module Idsimple
   module Rack
     class Configuration
+      DEFAULT_COOKIE_NAME = "idsimple.access_token"
+
       attr_accessor :get_access_token, :set_access_token, :signing_secret,
         :authenticate_path, :issuer, :api_base_url, :after_authenticated_path,
         :app_id, :skip_on, :logger
@@ -29,11 +31,11 @@ module Idsimple
 
       def default_access_token_getter(env)
         req = Rack::Request.new(env)
-        req.cookies["idsimple.access_token"]
+        req.cookies[DEFAULT_COOKIE_NAME]
       end
 
       def default_access_token_setter(env, res, access_token, decoded_access_token)
-        res.set_cookie("idsimple.access_token", {
+        res.set_cookie(DEFAULT_COOKIE_NAME, {
           value: access_token,
           expires: Time.at(decoded_access_token[0]["exp"]),
           httponly: true,
