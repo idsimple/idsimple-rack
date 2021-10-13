@@ -27,5 +27,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "rack", ">= 1.0", "< 3"
-  spec.add_runtime_dependency "jwt", "~> 2.0"
+  spec.add_runtime_dependency "jwt", "~> 2.0" # TODO: relax constraint
 end
