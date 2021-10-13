@@ -27,6 +27,7 @@ module Idsimple
         @get_access_token = method(:default_access_token_getter)
         @set_access_token = method(:default_access_token_setter)
         @logger = Logger.new(STDOUT)
+        @logger.level = Logger::INFO
       end
 
       def default_access_token_getter(env)
