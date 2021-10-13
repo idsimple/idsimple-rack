@@ -4,4 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 12.0"
-gem "minitest", "~> 5.0"
+gem "rspec", "~> 3.0"
+gem "rack-test", "~> 1.1.0"
+gem "pry"
+gem "pry-byebug"
