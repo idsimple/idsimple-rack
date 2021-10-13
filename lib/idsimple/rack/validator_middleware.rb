@@ -23,6 +23,10 @@ module Idsimple
           return app.call(env)
         end
 
+        access_token = configuration.get_access_token.call(env)
+
+        return UNAUTHORIZED_RESPONSE unless access_token
+
         logger.info("Retrieved access_token token from store")
         decoded_access_token = decode_access_token(access_token, signing_secret)
         logger.info("Decoded access_token token")
