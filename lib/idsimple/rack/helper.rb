@@ -1,3 +1,6 @@
+require "idsimple/rack/access_token_helper"
+require "idsimple/rack/api"
+
 module Idsimple
   module Rack
     module Helper
