@@ -13,20 +13,20 @@ module Idsimple
         req = ::Rack::Request.new(env)
 
         if (access_token = req.params["access_token"])
-          logger.info("Found access_token token")
+          logger.debug("Found access_token token")
 
           decoded_access_token = decode_access_token(access_token, signing_secret)
-          logger.info("Decoded access_token token")
+          logger.debug("Decoded access_token token")
 
           validation_result = AccessTokenValidator.validate_unused_token_custom_claims(decoded_access_token, req)
           if validation_result.invalid?
-            logger.info("Attempted to access with invalid token: #{validation_result.errors}")
+            logger.warn("Attempted to access with invalid token: #{validation_result.errors}")
             return UNAUTHORIZED_RESPONSE
           end
 
           use_token_response = api.use_token(decoded_access_token[0]["jti"])
           if !use_token_response.kind_of?(Net::HTTPSuccess)
-            logger.info(use_token_response.body) if use_token_response.body
+            logger.warn(use_token_response.body) if use_token_response.body
             return UNAUTHORIZED_RESPONSE
           end
 
@@ -41,7 +41,7 @@ module Idsimple
           UNAUTHORIZED_RESPONSE
         end
       rescue JWT::DecodeError => e
-        logger.info("Error while decoding token: #{e.class} - #{e.message}")
+        logger.warn("Error while decoding token: #{e.class} - #{e.message}")
         UNAUTHORIZED_RESPONSE
       end
     end

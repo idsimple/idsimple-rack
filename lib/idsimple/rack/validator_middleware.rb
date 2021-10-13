@@ -27,13 +27,13 @@ module Idsimple
 
         return UNAUTHORIZED_RESPONSE unless access_token
 
-        logger.info("Retrieved access_token token from store")
+        logger.debug("Retrieved access_token token from store")
         decoded_access_token = decode_access_token(access_token, signing_secret)
-        logger.info("Decoded access_token token")
+        logger.debug("Decoded access_token token")
 
         validation_result = AccessTokenValidator.validate_used_token_custom_claims(decoded_access_token, req)
         if validation_result.invalid?
-          logger.info("Attempted to access with invalid used token: #{validation_result.errors}")
+          logger.warn("Attempted to access with invalid used token: #{validation_result.errors}")
           return UNAUTHORIZED_RESPONSE
         end
 
@@ -44,22 +44,25 @@ module Idsimple
           env[ACCESS_TOKEN_ENV_KEY] = decoded_access_token
           app.call(env)
         end
+      rescue JWT::DecodeError => e
+        logger.warn("Error while decoding token: #{e.class} - #{e.message}")
+        UNAUTHORIZED_RESPONSE
       end
 
       def handle_refresh_access_token(jti, env)
         token_refresh_response = api.refresh_token(jti)
 
         if !token_refresh_response.kind_of?(Net::HTTPSuccess)
-          logger.info("Token refresh failed")
+          logger.warn("Token refresh failed")
           UNAUTHORIZED_RESPONSE
         else
-          logger.info("Refreshed access token")
+          logger.debug("Refreshed access token")
           new_access_token = token_refresh_response.body["access_token"]
           new_decoded_access_token = decode_access_token(new_access_token, signing_secret)
           env[ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
           status, headers, body = app.call(env)
           res = ::Rack::Response.new(body, status, headers)
-          set_access_token.call(env, res, new_access_token, new_decoded_access_token)
+          configuration.set_access_token.call(env, res, new_access_token, new_decoded_access_token)
           res.finish
         end
       end
