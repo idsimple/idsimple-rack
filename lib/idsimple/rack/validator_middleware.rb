@@ -17,6 +17,8 @@ module Idsimple
       end
 
       def call(env)
+        return app.call(env) unless configuration.enabled
+
         req = ::Rack::Request.new(env)
 
         if req.path == configuration.authenticate_path

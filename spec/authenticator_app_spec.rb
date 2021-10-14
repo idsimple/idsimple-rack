@@ -70,5 +70,14 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
       expect(last_response.redirect?).to be true
       expect(last_response.location).to eq(Idsimple::Rack.configuration.after_authenticated_path)
     end
+
+    context "when disabled" do
+      before { Idsimple::Rack.configuration.enabled = false }
+
+      it "returns a 404, not found" do
+        get authenticate_path
+        expect(last_response.not_found?).to be true
+      end
+    end
   end
 end

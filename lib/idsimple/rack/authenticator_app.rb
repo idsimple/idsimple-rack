@@ -10,6 +10,8 @@ module Idsimple
       UNAUTHORIZED_RESPONSE = ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]].freeze
 
       def self.call(env)
+        return ["404", { "Content-Type" => "text/html" }, ["NOT FOUND"]] unless configuration.enabled
+
         req = ::Rack::Request.new(env)
 
         if (access_token = req.params["access_token"])

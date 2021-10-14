@@ -8,7 +8,7 @@ module Idsimple
 
       attr_accessor :get_access_token, :set_access_token, :signing_secret,
         :authenticate_path, :issuer, :api_base_url, :after_authenticated_path,
-        :app_id, :skip_on, :logger
+        :app_id, :skip_on, :logger, :enabled
 
       def initialize
         set_defaults
@@ -17,6 +17,7 @@ module Idsimple
       private
 
       def set_defaults
+        @enabled = true
         @authenticate_path = "/idsimple/session"
         @after_authenticated_path = "/"
         @issuer = "https://app.idsimple.com"
