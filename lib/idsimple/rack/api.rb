@@ -10,6 +10,8 @@ module Idsimple
         @base_url = base_url
       end
 
+      # TODO:
+      # - incorporate API secret
       def http_client
         @http_client ||= begin
           uri = URI.parse(base_url)
@@ -17,8 +19,6 @@ module Idsimple
         end
       end
 
-      # TODO:
-      # - incorporate API secret
       def use_token(token_id)
         response = http_client.patch("/api/v1/sessions/#{token_id}/use", "")
         Result.new(response)
