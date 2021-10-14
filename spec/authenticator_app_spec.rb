@@ -39,7 +39,7 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
       expect(last_response.unauthorized?).to be true
     end
 
-    it "returns unuathorized response when custom claim validation fails" do
+    it "returns unauthorized response when custom claim validation fails" do
       expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_unused_token_custom_claims) do
         result = Idsimple::Rack::AccessTokenValidationResult.new
         result.add_error("This is an error")
