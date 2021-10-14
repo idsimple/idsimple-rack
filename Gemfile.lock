@@ -13,12 +13,12 @@ GEM
     diff-lcs (1.4.4)
     jwt (2.3.0)
     method_source (1.0.0)
-    pry (0.14.1)
+    pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-byebug (3.8.0)
+    pry-byebug (3.9.0)
       byebug (~> 11.0)
-      pry (~> 0.10)
+      pry (~> 0.13.0)
     rack (2.2.3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -43,8 +43,7 @@ PLATFORMS
 
 DEPENDENCIES
   idsimple-rack!
-  pry
-  pry-byebug
+  pry-byebug (~> 3.9)
   rack-test (~> 1.1.0)
   rake (~> 12.0)
   rspec (~> 3.0)

@@ -6,6 +6,5 @@ gemspec
 gem "rake", "~> 12.0"
 gem "rspec", "~> 3.0"
 gem "rack-test", "~> 1.1.0"
-gem "pry"
-gem "pry-byebug"
+gem "pry-byebug", "~> 3.9"
 gem "timecop", "~> 0.9"

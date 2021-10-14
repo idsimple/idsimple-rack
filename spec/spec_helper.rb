@@ -1,6 +1,5 @@
 require "idsimple/rack"
 require "rack/test"
-require "pry"
 require "pry-byebug"
 require "timecop"
 require "helpers/token_helper"
