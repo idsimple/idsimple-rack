@@ -45,8 +45,16 @@ module Idsimple
           !success?
         end
 
+        def status
+          response.code
+        end
+
         def body
           @body ||= JSON.parse(response.body) if response.body
+        end
+
+        def full_error_message
+          "#{body["errors"].join(". ")}." if body && body["errors"]
         end
       end
     end
