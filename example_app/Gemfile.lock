@@ -1,0 +1,21 @@
+PATH
+  remote: ..
+  specs:
+    idsimple-rack (0.1.0)
+      jwt (~> 2.0)
+      rack (>= 1.0, < 3)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    jwt (2.3.0)
+    rack (2.2.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  idsimple-rack!
+
+BUNDLED WITH
+   2.1.4
