@@ -5,9 +5,9 @@ module Idsimple
     class AccessTokenValidator
       def self.validate_used_token_custom_claims(decoded_token, req)
         token_payload = decoded_token[0]
-        ip = token_payload["ip"]
-        user_agent = token_payload["user_agent"]
-        used_at = token_payload["used_at"]
+        ip = token_payload["idsimple.ip"]
+        user_agent = token_payload["idsimple.user_agent"]
+        used_at = token_payload["idsimple.used_at"]
 
         result = AccessTokenValidationResult.new
 
@@ -27,10 +27,10 @@ module Idsimple
 
       def self.validate_unused_token_custom_claims(decoded_token, req)
         token_payload = decoded_token[0]
-        bf = token_payload["bf"]
-        used_at = token_payload["used_at"]
-        ip = token_payload["ip"]
-        user_agent = token_payload["user_agent"]
+        bf = token_payload["idsimple.use_by"]
+        used_at = token_payload["idsimple.used_at"]
+        ip = token_payload["idsimple.ip"]
+        user_agent = token_payload["idsimple.user_agent"]
 
         result = AccessTokenValidationResult.new
 

@@ -20,7 +20,7 @@ module Idsimple
       end
 
       def full_error_message
-        "#{errors.join(". ")}."
+        "#{errors.join(". ")}." unless errors.empty?
       end
     end
   end
