@@ -6,16 +6,6 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
   let(:authenticate_path) { Idsimple::Rack.configuration.authenticate_path }
   let(:signing_secret) { "123" }
 
-  let(:app) do
-    Rack::Builder.app do
-      map Idsimple::Rack.configuration.authenticate_path do
-        run Idsimple::Rack::AuthenticatorApp
-      end
-
-      run lambda { |env| [200, { "Content-Type" => "text/plain" }, ["OK"]] }
-    end
-  end
-
   let(:logger) { Logger.new(IO::NULL) }
   let(:base_token_payload) do
     {
@@ -34,6 +24,16 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
       signing_secret,
       "HS256"
     )
+  end
+
+  let(:app) do
+    Rack::Builder.app do
+      map Idsimple::Rack.configuration.authenticate_path do
+        run Idsimple::Rack::AuthenticatorApp
+      end
+
+      run lambda { |env| [200, { "Content-Type" => "text/plain" }, ["OK"]] }
+    end
   end
 
   before do
