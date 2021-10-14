@@ -18,7 +18,6 @@ module Idsimple
       end
 
       # TODO:
-      # - handle unsuccessful response
       # - incorporate API secret
       def use_token(token_id)
         response = http_client.patch("/api/v1/sessions/#{token_id}/use", "")
