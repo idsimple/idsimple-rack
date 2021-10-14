@@ -34,9 +34,9 @@ module Idsimple
 
         return unauthorized_response(req) unless access_token
 
-        logger.debug("Retrieved access_token token from store")
+        logger.debug("Retrieved access token from store")
         decoded_access_token = decode_access_token(access_token, signing_secret)
-        logger.debug("Decoded access_token token")
+        logger.debug("Decoded access token")
 
         validation_result = AccessTokenValidator.validate_used_token_custom_claims(decoded_access_token, req)
         if validation_result.invalid?
