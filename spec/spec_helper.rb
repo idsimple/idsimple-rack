@@ -1,8 +1,9 @@
 require "idsimple/rack"
-require "helpers/token_helper"
 require "rack/test"
 require "pry"
 require "pry-byebug"
+require "helpers/token_helper"
+require "helpers/api_helper"
 
 RSpec.configure do |config|
   # Disable RSpec exposing methods globally on `Module` and `main`
@@ -13,4 +14,5 @@ RSpec.configure do |config|
   end
 
   config.include TokenHelper
+  config.include ApiHelper
 end

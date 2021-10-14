@@ -53,13 +53,22 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
       expect(last_response.unauthorized?).to be true
     end
 
+    it "returns unauthorized response when use_token api call fails" do
+      payload = generate_token_payload
+      expect_any_instance_of(Idsimple::Rack::Api).to receive(:use_token) do
+        mocked_api_result(422, { "errors" => ["An error occurred"] })
+      end
+
+      expect(logger).to receive(:warn).with("Use token response error. HTTP status 422. An error occurred.")
+
+      get "#{authenticate_path}?access_token=#{encode_token(payload)}"
+      expect(last_response.unauthorized?).to be true
+    end
+
     it "redirects to authenticated path with valid access token" do
       payload = generate_token_payload
       expect_any_instance_of(Idsimple::Rack::Api).to receive(:use_token) do
-        OpenStruct.new(
-          :success? => true,
-          body: { "access_token" => encode_token(payload.merge("used_at" => Time.now)) }
-        )
+        mocked_api_result(200, { "access_token" => encode_token(payload.merge("used_at" => Time.now)) })
       end
 
       get "#{authenticate_path}?access_token=#{encode_token(payload)}"
