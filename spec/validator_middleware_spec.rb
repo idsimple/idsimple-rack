@@ -128,5 +128,15 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
         expect(last_response.unauthorized?).to be true
       end
     end
+
+    context "when disabled" do
+      before { Idsimple::Rack.configuration.enabled = false }
+
+      it "doesn't valiate requests" do
+        get "/"
+        expect(last_response.ok?).to be true
+        expect(last_response.body).to eq("OK")
+      end
+    end
   end
 end
