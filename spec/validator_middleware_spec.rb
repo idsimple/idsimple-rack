@@ -55,5 +55,29 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       get "/"
       expect(last_response.unauthorized?).to be true
     end
+
+
+    it "returns unauthorized response when custom claim validation fails" do
+      authenticate
+
+      expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_used_token_custom_claims) do
+        result = Idsimple::Rack::AccessTokenValidationResult.new
+        result.add_error("This is an error")
+        result
+      end
+
+      expect(logger).to receive(:warn).with("Attempted to access with invalid used token: This is an error.")
+
+      follow_redirect!
+
+      expect(last_response.unauthorized?).to be true
+    end
+
+    it "allows access with valid token" do
+      authenticate
+      follow_redirect!
+      expect(last_response.ok?).to be true
+      expect(last_response.body).to eq("OK")
+    end
   end
 end

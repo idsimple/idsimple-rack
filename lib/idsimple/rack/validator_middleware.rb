@@ -55,6 +55,8 @@ module Idsimple
         UNAUTHORIZED_RESPONSE
       end
 
+      private
+
       def handle_refresh_access_token(jti, env)
         token_refresh_response = api.refresh_token(jti)
 
