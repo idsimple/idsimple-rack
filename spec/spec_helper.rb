@@ -1,4 +1,4 @@
-require "idsimple/rack"
+require "idsimple-rack"
 require "rack/test"
 require "pry-byebug"
 require "timecop"
