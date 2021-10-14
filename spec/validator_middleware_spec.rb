@@ -3,7 +3,8 @@ require "spec_helper"
 RSpec.describe Idsimple::Rack::ValidatorMiddleware do
   include Rack::Test::Methods
 
-  let(:authenticate_path) { Idsimple::Rack.configuration.authenticate_path }
+  let(:configuration) { Idsimple::Rack.configuration }
+  let(:authenticate_path) { configuration.authenticate_path }
   let(:signing_secret) { "123" }
 
   let(:logger) { Logger.new(IO::NULL) }
@@ -38,6 +39,20 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     it "skips validator middleware when attempting to authenticate" do
       expect(logger).to receive(:debug).with("Attempting to authenticate. Skipping validation.")
       get authenticate_path
+      expect(last_response.unauthorized?).to be true
+    end
+
+    it "skips validator middleware when Configuration#skip_on returns true" do
+      configuration.skip_on = ->(req) {
+        req.path == "/skip"
+      }
+
+      expect(logger).to receive(:debug).with("Skipping validator due to skip_on rules")
+      get "/skip"
+      expect(last_response.ok?).to be true
+      expect(last_response.body).to eq("OK")
+
+      get "/"
       expect(last_response.unauthorized?).to be true
     end
   end
