@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "rack"
 require "logger"
-require "idsimple/rack"
+require "idsimple-rack"
 
 class Application
   def call(_)
