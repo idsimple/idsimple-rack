@@ -86,6 +86,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       Timecop.freeze(Time.now) do
         refresh_at = Time.now + 60
         payload = authenticate("refresh_at" => refresh_at.to_i)
+
         follow_redirect!
         expect(last_response.ok?).to be true
         expect(last_response.body).to eq("OK")
@@ -110,6 +111,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       Timecop.freeze(Time.now) do
         refresh_at = Time.now + 60
         payload = authenticate("refresh_at" => refresh_at.to_i)
+
         follow_redirect!
         expect(last_response.ok?).to be true
         expect(last_response.body).to eq("OK")
