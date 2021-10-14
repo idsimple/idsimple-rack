@@ -27,7 +27,7 @@ module Idsimple
 
       def self.validate_unused_token_custom_claims(decoded_token, req)
         token_payload = decoded_token[0]
-        bf = token_payload["idsimple.use_by"]
+        use_by = token_payload["idsimple.use_by"]
         used_at = token_payload["idsimple.used_at"]
         ip = token_payload["idsimple.ip"]
         user_agent = token_payload["idsimple.user_agent"]
@@ -42,7 +42,7 @@ module Idsimple
           result.add_error("User agent mismatch")
         end
 
-        if bf && Time.now.to_i > bf
+        if use_by && Time.now.to_i > use_by
           result.add_error("Token must be used prior to before claim")
         end
 
