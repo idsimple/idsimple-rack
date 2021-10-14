@@ -7,24 +7,6 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
   let(:signing_secret) { "123" }
 
   let(:logger) { Logger.new(IO::NULL) }
-  let(:base_token_payload) do
-    {
-      "jti" => "123",
-      "sub" => "123",
-      "aud" => "123",
-      "iat" => Time.now.to_i,
-      "exp" => (Time.now + 60*60).to_i,
-      "iss" => Idsimple::Rack.configuration.issuer
-    }
-  end
-
-  let(:encoded_token) do
-    JWT.encode(
-      base_token_payload,
-      signing_secret,
-      "HS256"
-    )
-  end
 
   let(:app) do
     Rack::Builder.app do
@@ -57,15 +39,30 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
       expect(last_response.unauthorized?).to be true
     end
 
+    it "returns unuathorized response when custom claim validation fails" do
+      expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_unused_token_custom_claims) do
+        result = Idsimple::Rack::AccessTokenValidationResult.new
+        result.add_error("This is an error")
+        result
+      end
+
+      expect(logger).to receive(:warn).with("Attempted to access with invalid token: This is an error.")
+
+      payload = generate_token_payload
+      get "#{authenticate_path}?access_token=#{encode_token(payload)}"
+      expect(last_response.unauthorized?).to be true
+    end
+
     it "redirects to authenticated path with valid access token" do
+      payload = generate_token_payload
       expect_any_instance_of(Idsimple::Rack::Api).to receive(:use_token) do
         OpenStruct.new(
           :success? => true,
-          body: { "access_token" => JWT.encode(base_token_payload.merge("used_at" => Time.now), signing_secret, "HS256") }
+          body: { "access_token" => encode_token(payload.merge("used_at" => Time.now)) }
         )
       end
 
-      get "#{authenticate_path}?access_token=#{encoded_token}"
+      get "#{authenticate_path}?access_token=#{encode_token(payload)}"
       expect(last_response.redirect?).to be true
       expect(last_response.location).to eq(Idsimple::Rack.configuration.after_authenticated_path)
     end

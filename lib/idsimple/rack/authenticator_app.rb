@@ -20,7 +20,7 @@ module Idsimple
 
           validation_result = AccessTokenValidator.validate_unused_token_custom_claims(decoded_access_token, req)
           if validation_result.invalid?
-            logger.warn("Attempted to access with invalid token: #{validation_result.errors}")
+            logger.warn("Attempted to access with invalid token: #{validation_result.full_error_message}")
             return UNAUTHORIZED_RESPONSE
           end
 

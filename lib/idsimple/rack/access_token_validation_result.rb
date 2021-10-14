@@ -18,6 +18,10 @@ module Idsimple
       def add_error(msg)
         @errors << msg
       end
+
+      def full_error_message
+        "#{errors.join(". ")}."
+      end
     end
   end
 end

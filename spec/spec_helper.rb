@@ -1,4 +1,5 @@
 require "idsimple/rack"
+require "helpers/token_helper"
 require "rack/test"
 require "pry"
 require "pry-byebug"
@@ -10,4 +11,6 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.include TokenHelper
 end
