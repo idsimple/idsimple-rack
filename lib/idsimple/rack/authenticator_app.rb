@@ -13,10 +13,10 @@ module Idsimple
         req = ::Rack::Request.new(env)
 
         if (access_token = req.params["access_token"])
-          logger.debug("Found access_token token")
+          logger.debug("Found access token")
 
           decoded_access_token = decode_access_token(access_token, signing_secret)
-          logger.debug("Decoded access_token token")
+          logger.debug("Decoded access token")
 
           validation_result = AccessTokenValidator.validate_unused_token_custom_claims(decoded_access_token, req)
           if validation_result.invalid?
@@ -26,7 +26,7 @@ module Idsimple
 
           use_token_response = api.use_token(decoded_access_token[0]["jti"])
           if use_token_response.fail?
-            logger.warn(use_token_response.body) if use_token_response.body
+            logger.warn("Use token response error. HTTP status #{use_token_response.status}. #{use_token_response.full_error_message}")
             return UNAUTHORIZED_RESPONSE
           end
 
