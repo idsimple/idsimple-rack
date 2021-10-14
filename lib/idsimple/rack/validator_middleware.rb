@@ -5,7 +5,7 @@ require "idsimple/rack/helper"
 module Idsimple
   module Rack
     class ValidatorMiddleware
-      include Idsimple::Rack::Helper
+      include Helper
 
       DECODED_ACCESS_TOKEN_ENV_KEY = "idsimple.decoded_access_token"
 

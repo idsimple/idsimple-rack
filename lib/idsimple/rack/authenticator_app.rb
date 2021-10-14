@@ -5,7 +5,7 @@ require "idsimple/rack/helper"
 module Idsimple
   module Rack
     class AuthenticatorApp
-      extend Idsimple::Rack::Helper
+      extend Helper
 
       def self.call(env)
         return ["404", { "Content-Type" => "text/html" }, ["NOT FOUND"]] unless configuration.enabled?
