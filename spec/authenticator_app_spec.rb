@@ -66,12 +66,7 @@ RSpec.describe Idsimple::Rack::AuthenticatorApp do
     end
 
     it "redirects to authenticated path with valid access token" do
-      payload = generate_token_payload
-      expect_any_instance_of(Idsimple::Rack::Api).to receive(:use_token) do
-        mocked_api_result(200, { "access_token" => encode_token(payload.merge("used_at" => Time.now)) })
-      end
-
-      get "#{authenticate_path}?access_token=#{encode_token(payload)}"
+      authenticate
       expect(last_response.redirect?).to be true
       expect(last_response.location).to eq(Idsimple::Rack.configuration.after_authenticated_path)
     end
