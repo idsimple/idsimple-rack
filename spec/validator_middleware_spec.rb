@@ -85,7 +85,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     it "refreshes token when refresh_at is in the past" do
       Timecop.freeze(Time.now) do
         refresh_at = Time.now + 60
-        payload = authenticate("refresh_at" => refresh_at.to_i)
+        payload = authenticate("idsimple.refresh_at" => refresh_at.to_i)
 
         follow_redirect!
         expect(last_response.ok?).to be true
@@ -93,7 +93,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
 
         Timecop.travel(refresh_at + 2*60)
 
-        new_payload = payload.merge("refresh_at" => (Time.now + 60).to_i)
+        new_payload = payload.merge("idsimple.refresh_at" => (Time.now + 60).to_i)
         expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
           mocked_api_result(200, { "access_token" => encode_token(new_payload) })
         end
@@ -110,7 +110,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     it "returns unauthorized when token refresh fails" do
       Timecop.freeze(Time.now) do
         refresh_at = Time.now + 60
-        payload = authenticate("refresh_at" => refresh_at.to_i)
+        payload = authenticate("idsimple.refresh_at" => refresh_at.to_i)
 
         follow_redirect!
         expect(last_response.ok?).to be true
@@ -118,7 +118,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
 
         Timecop.travel(refresh_at + 2*60)
 
-        new_payload = payload.merge("refresh_at" => (Time.now + 60).to_i)
+        new_payload = payload.merge("idsimple.refresh_at" => (Time.now + 60).to_i)
         expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
           mocked_api_result(422, { "errors" => ["An error occurred"] })
         end
