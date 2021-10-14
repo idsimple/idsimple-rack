@@ -25,7 +25,7 @@ module Idsimple
           end
 
           use_token_response = api.use_token(decoded_access_token[0]["jti"])
-          if !use_token_response.kind_of?(Net::HTTPSuccess)
+          if use_token_response.fail?
             logger.warn(use_token_response.body) if use_token_response.body
             return UNAUTHORIZED_RESPONSE
           end

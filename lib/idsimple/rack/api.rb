@@ -22,14 +22,32 @@ module Idsimple
       # - incorporate API secret
       def use_token(token_id)
         response = http_client.patch("/api/v1/sessions/#{token_id}/use", "")
-        response.body = JSON.parse(response.body) if response.body
-        response
+        Result.new(response)
       end
 
       def refresh_token(token_id)
         response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "")
-        response.body = JSON.parse(response.body) if response.body
-        response
+        Result.new(response)
+      end
+
+      class Result
+        attr_reader :response
+
+        def initialize(response)
+          @response = response
+        end
+
+        def success?
+          response.kind_of?(Net::HTTPSuccess)
+        end
+
+        def fail?
+          !success?
+        end
+
+        def body
+          @body ||= JSON.parse(response.body) if response.body
+        end
       end
     end
   end

@@ -52,7 +52,7 @@ module Idsimple
       def handle_refresh_access_token(jti, env)
         token_refresh_response = api.refresh_token(jti)
 
-        if !token_refresh_response.kind_of?(Net::HTTPSuccess)
+        if token_refresh_response.fail?
           logger.warn("Token refresh failed")
           UNAUTHORIZED_RESPONSE
         else
