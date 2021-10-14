@@ -44,6 +44,7 @@ module Idsimple
         end
 
         if (refresh_at = decoded_access_token[0]["refresh_at"]) && refresh_at < Time.now.to_i
+          logger.debug("Refreshing access token")
           jti = decoded_access_token[0]["jti"]
           handle_refresh_access_token(jti, env)
         else

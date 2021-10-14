@@ -74,10 +74,57 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     end
 
     it "allows access with valid token" do
-      authenticate
+      payload = authenticate
       follow_redirect!
+      expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY))
+      expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY][0]).to include(payload)
       expect(last_response.ok?).to be true
       expect(last_response.body).to eq("OK")
+    end
+
+    it "refreshes token when refresh_at is in the past" do
+      Timecop.freeze(Time.now) do
+        refresh_at = Time.now + 60
+        payload = authenticate("refresh_at" => refresh_at.to_i)
+        follow_redirect!
+        expect(last_response.ok?).to be true
+        expect(last_response.body).to eq("OK")
+
+        Timecop.travel(refresh_at + 2*60)
+
+        new_payload = payload.merge("refresh_at" => (Time.now + 60).to_i)
+        expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
+          mocked_api_result(200, { "access_token" => encode_token(new_payload) })
+        end
+
+        get "/"
+
+        expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY))
+        expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY][0]).to include(new_payload)
+        expect(last_response.ok?).to be true
+        expect(last_response.body).to eq("OK")
+      end
+    end
+
+    it "returns unauthorized when token refresh fails" do
+      Timecop.freeze(Time.now) do
+        refresh_at = Time.now + 60
+        payload = authenticate("refresh_at" => refresh_at.to_i)
+        follow_redirect!
+        expect(last_response.ok?).to be true
+        expect(last_response.body).to eq("OK")
+
+        Timecop.travel(refresh_at + 2*60)
+
+        new_payload = payload.merge("refresh_at" => (Time.now + 60).to_i)
+        expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
+          mocked_api_result(422, { "errors" => ["An error occurred"] })
+        end
+
+        get "/"
+
+        expect(last_response.unauthorized?).to be true
+      end
     end
   end
 end
