@@ -7,7 +7,6 @@ module Idsimple
     class ValidatorMiddleware
       include Idsimple::Rack::Helper
 
-      UNAUTHORIZED_RESPONSE = ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]].freeze
       DECODED_ACCESS_TOKEN_ENV_KEY = "idsimple.decoded_access_token"
 
       attr_reader :app
@@ -17,7 +16,7 @@ module Idsimple
       end
 
       def call(env)
-        return app.call(env) unless configuration.enabled
+        return app.call(env) unless configuration.enabled?
 
         req = ::Rack::Request.new(env)
 
@@ -31,9 +30,9 @@ module Idsimple
           return app.call(env)
         end
 
-        access_token = configuration.get_access_token.call(env)
+        access_token = get_access_token(req)
 
-        return UNAUTHORIZED_RESPONSE unless access_token
+        return unauthorized_response(req) unless access_token
 
         logger.debug("Retrieved access_token token from store")
         decoded_access_token = decode_access_token(access_token, signing_secret)
@@ -42,38 +41,38 @@ module Idsimple
         validation_result = AccessTokenValidator.validate_used_token_custom_claims(decoded_access_token, req)
         if validation_result.invalid?
           logger.warn("Attempted to access with invalid used token: #{validation_result.full_error_message}")
-          return UNAUTHORIZED_RESPONSE
+          return unauthorized_response(req)
         end
 
         if (refresh_at = decoded_access_token[0]["idsimple.refresh_at"]) && refresh_at < Time.now.to_i
           logger.debug("Refreshing access token")
           jti = decoded_access_token[0]["jti"]
-          handle_refresh_access_token(jti, env)
+          handle_refresh_access_token(jti, req)
         else
           env[DECODED_ACCESS_TOKEN_ENV_KEY] = decoded_access_token
           app.call(env)
         end
       rescue JWT::DecodeError => e
         logger.warn("Error while decoding token: #{e.class} - #{e.message}")
-        UNAUTHORIZED_RESPONSE
+        unauthorized_response(req)
       end
 
       private
 
-      def handle_refresh_access_token(jti, env)
+      def handle_refresh_access_token(jti, req)
         token_refresh_response = api.refresh_token(jti)
 
         if token_refresh_response.fail?
           logger.warn("Token refresh failed")
-          UNAUTHORIZED_RESPONSE
+          unauthorized_response(req)
         else
           logger.debug("Refreshed access token")
           new_access_token = token_refresh_response.body["access_token"]
           new_decoded_access_token = decode_access_token(new_access_token, signing_secret)
-          env[DECODED_ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
-          status, headers, body = app.call(env)
+          req.env[DECODED_ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
+          status, headers, body = app.call(req.env)
           res = ::Rack::Response.new(body, status, headers)
-          configuration.set_access_token.call(env, res, new_access_token, new_decoded_access_token)
+          set_access_token(req, res, new_access_token, new_decoded_access_token)
           res.finish
         end
       end

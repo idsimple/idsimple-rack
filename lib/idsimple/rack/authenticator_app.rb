@@ -7,10 +7,8 @@ module Idsimple
     class AuthenticatorApp
       extend Idsimple::Rack::Helper
 
-      UNAUTHORIZED_RESPONSE = ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]].freeze
-
       def self.call(env)
-        return ["404", { "Content-Type" => "text/html" }, ["NOT FOUND"]] unless configuration.enabled
+        return ["404", { "Content-Type" => "text/html" }, ["NOT FOUND"]] unless configuration.enabled?
 
         req = ::Rack::Request.new(env)
 
@@ -23,13 +21,13 @@ module Idsimple
           validation_result = AccessTokenValidator.validate_unused_token_custom_claims(decoded_access_token, req)
           if validation_result.invalid?
             logger.warn("Attempted to access with invalid token: #{validation_result.full_error_message}")
-            return UNAUTHORIZED_RESPONSE
+            return unauthorized_response(req)
           end
 
           use_token_response = api.use_token(decoded_access_token[0]["jti"])
           if use_token_response.fail?
             logger.warn("Use token response error. HTTP status #{use_token_response.status}. #{use_token_response.full_error_message}")
-            return UNAUTHORIZED_RESPONSE
+            return unauthorized_response(req)
           end
 
           new_access_token = use_token_response.body["access_token"]
@@ -37,14 +35,14 @@ module Idsimple
 
           res = ::Rack::Response.new
           res.redirect(configuration.after_authenticated_path)
-          configuration.set_access_token.call(env, res, new_access_token, new_decoded_access_token)
+          set_access_token(req, res, new_access_token, new_decoded_access_token)
           res.finish
         else
-          UNAUTHORIZED_RESPONSE
+          unauthorized_response(req)
         end
       rescue JWT::DecodeError => e
         logger.warn("Error while decoding token: #{e.class} - #{e.message}")
-        UNAUTHORIZED_RESPONSE
+        unauthorized_response(req)
       end
     end
   end

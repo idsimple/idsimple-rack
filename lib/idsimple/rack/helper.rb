@@ -16,6 +16,18 @@ module Idsimple
         configuration.signing_secret
       end
 
+      def unauthorized_response(req)
+        configuration.unauthorized_response.call(req)
+      end
+
+      def get_access_token(req)
+        configuration.get_access_token.call(req)
+      end
+
+      def set_access_token(req, res, new_access_token, new_decoded_access_token)
+        configuration.set_access_token.call(req, res, new_access_token, new_decoded_access_token)
+      end
+
       def decode_access_token(access_token, signing_secret)
         AccessTokenHelper.decode(access_token, signing_secret, {
           iss: configuration.issuer,
