@@ -76,8 +76,8 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     it "allows access with valid token" do
       payload = authenticate
       follow_redirect!
-      expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY))
-      expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY][0]).to include(payload)
+      expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::DECODED_ACCESS_TOKEN_ENV_KEY))
+      expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::DECODED_ACCESS_TOKEN_ENV_KEY][0]).to include(payload)
       expect(last_response.ok?).to be true
       expect(last_response.body).to eq("OK")
     end
@@ -100,8 +100,8 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
 
         get "/"
 
-        expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY))
-        expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::ACCESS_TOKEN_ENV_KEY][0]).to include(new_payload)
+        expect(last_request.env.has_key?(Idsimple::Rack::ValidatorMiddleware::DECODED_ACCESS_TOKEN_ENV_KEY))
+        expect(last_request.env[Idsimple::Rack::ValidatorMiddleware::DECODED_ACCESS_TOKEN_ENV_KEY][0]).to include(new_payload)
         expect(last_response.ok?).to be true
         expect(last_response.body).to eq("OK")
       end

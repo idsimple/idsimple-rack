@@ -8,7 +8,7 @@ module Idsimple
       include Idsimple::Rack::Helper
 
       UNAUTHORIZED_RESPONSE = ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]].freeze
-      ACCESS_TOKEN_ENV_KEY = "idsimple.access_token"
+      DECODED_ACCESS_TOKEN_ENV_KEY = "idsimple.decoded_access_token"
 
       attr_reader :app
 
@@ -48,7 +48,7 @@ module Idsimple
           jti = decoded_access_token[0]["jti"]
           handle_refresh_access_token(jti, env)
         else
-          env[ACCESS_TOKEN_ENV_KEY] = decoded_access_token
+          env[DECODED_ACCESS_TOKEN_ENV_KEY] = decoded_access_token
           app.call(env)
         end
       rescue JWT::DecodeError => e
@@ -68,7 +68,7 @@ module Idsimple
           logger.debug("Refreshed access token")
           new_access_token = token_refresh_response.body["access_token"]
           new_decoded_access_token = decode_access_token(new_access_token, signing_secret)
-          env[ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
+          env[DECODED_ACCESS_TOKEN_ENV_KEY] = new_decoded_access_token
           status, headers, body = app.call(env)
           res = ::Rack::Response.new(body, status, headers)
           configuration.set_access_token.call(env, res, new_access_token, new_decoded_access_token)
