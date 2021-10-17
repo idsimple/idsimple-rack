@@ -36,7 +36,7 @@ module Idsimple
       end
 
       def api
-        @api ||= Idsimple::Rack::Api.new(configuration.api_base_url)
+        @api ||= Idsimple::Rack::Api.new(configuration.api_base_url, configuration.api_key)
       end
     end
   end
