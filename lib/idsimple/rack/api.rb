@@ -16,7 +16,7 @@ module Idsimple
       def http_client
         @http_client ||= begin
           uri = URI.parse(base_url)
-          Net::HTTP.new(uri.host, uri.port, headers)
+          Net::HTTP.new(uri.host, uri.port)
         end
       end
 
