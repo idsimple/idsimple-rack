@@ -4,6 +4,11 @@ require "json"
 module Idsimple
   module Rack
     class Api
+      HEADERS = {
+        "Authorization" => "Bearer #{Idsimple::Rack.configuration.api_key}",
+        "Content-Type" => "application/json"
+      }.freeze
+
       attr_reader :base_url
 
       def initialize(base_url)
@@ -15,21 +20,17 @@ module Idsimple
       def http_client
         @http_client ||= begin
           uri = URI.parse(base_url)
-          headers = {
-            "Authorization" => "Bearer #{Idsimple::Rack.configuration.api_key}",
-            "Content-Type" => "application/json"
-          }
           Net::HTTP.new(uri.host, uri.port, headers)
         end
       end
 
       def use_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/use", "")
+        response = http_client.patch("/api/v1/sessions/#{token_id}/use", "", HEADERS)
         Result.new(response)
       end
 
       def refresh_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "")
+        response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "", HEADERS)
         Result.new(response)
       end
 
