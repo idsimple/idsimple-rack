@@ -15,7 +15,11 @@ module Idsimple
       def http_client
         @http_client ||= begin
           uri = URI.parse(base_url)
-          Net::HTTP.new(uri.host, uri.port)
+          headers = {
+            "Authorization" => "Bearer #{Idsimple::Rack.configuration.api_key}",
+            "Content-Type" => "application/json"
+          }
+          Net::HTTP.new(uri.host, uri.port, headers)
         end
       end
 
