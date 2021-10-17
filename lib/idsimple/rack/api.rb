@@ -6,8 +6,9 @@ module Idsimple
     class Api
       attr_reader :base_url
 
-      def initialize(base_url)
+      def initialize(base_url, api_key)
         @base_url = base_url
+        @api_key = api_key
       end
 
       # TODO:
@@ -20,13 +21,22 @@ module Idsimple
       end
 
       def use_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/use", "")
+        response = http_client.patch("/api/v1/sessions/#{token_id}/use", "", headers)
         Result.new(response)
       end
 
       def refresh_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "")
+        response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "", headers)
         Result.new(response)
+      end
+
+      private
+
+      def headers
+        {
+          "Authorization" => "Bearer #{@api_key}",
+          "Content-Type" => "application/json"
+        }
       end
 
       class Result
