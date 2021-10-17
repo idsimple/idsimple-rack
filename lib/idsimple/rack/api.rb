@@ -16,7 +16,9 @@ module Idsimple
       def http_client
         @http_client ||= begin
           uri = URI.parse(base_url)
-          Net::HTTP.new(uri.host, uri.port)
+          client = Net::HTTP.new(uri.host, uri.port)
+          client.use_ssl = base_url.start_with?("https")
+          client
         end
       end
 
