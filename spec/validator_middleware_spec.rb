@@ -5,7 +5,6 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
 
   let(:configuration) { Idsimple::Rack.configuration }
   let(:authenticate_path) { configuration.authenticate_path }
-  let(:signing_secret) { "123" }
 
   let(:logger) { Logger.new(IO::NULL) }
 
@@ -24,7 +23,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
   before do
     Idsimple::Rack.configure do |config|
       config.logger = logger
-      config.signing_secret = signing_secret
+      config.signing_secret = "123"
       config.app_id = "123"
     end
   end
