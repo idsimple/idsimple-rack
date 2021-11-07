@@ -8,7 +8,8 @@ module Idsimple
 
       attr_accessor :get_access_token, :set_access_token, :signing_secret,
         :authenticate_path, :issuer, :api_base_url, :after_authenticated_path,
-        :app_id, :skip_on, :logger, :enabled, :unauthorized_response, :api_key
+        :app_id, :skip_on, :logger, :enabled, :unauthorized_response, :api_key,
+        :redirect_to_authenticate
 
       def initialize
         set_defaults
@@ -33,6 +34,7 @@ module Idsimple
         @get_access_token = method(:default_access_token_getter)
         @set_access_token = method(:default_access_token_setter)
         @unauthorized_response = method(:default_unauthorized_response)
+        @redirect_to_authenticate = true
         @logger = Logger.new(STDOUT)
         @logger.level = Logger::INFO
       end

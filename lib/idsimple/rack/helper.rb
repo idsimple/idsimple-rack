@@ -20,6 +20,15 @@ module Idsimple
         configuration.unauthorized_response.call(req)
       end
 
+      def redirect_to_authenticate_or_unauthorized_response(req)
+        if configuration.redirect_to_authenticate
+          access_url = "#{configuration.issuer}/apps/#{configuration.app_id}/access"
+          return ["302", { "Content-Type" => "text/html", "Location" => location }, []]
+        else
+          unauthorized_response(req)
+        end
+      end
+
       def get_access_token(req)
         configuration.get_access_token.call(req)
       end

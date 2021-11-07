@@ -32,7 +32,7 @@ module Idsimple
 
         access_token = get_access_token(req)
 
-        return unauthorized_response(req) unless access_token
+        return redirect_to_authenticate_or_unauthorized_response(req) unless access_token
 
         logger.debug("Retrieved access token from store")
         decoded_access_token = decode_access_token(access_token, signing_secret)
@@ -41,7 +41,7 @@ module Idsimple
         validation_result = AccessTokenValidator.validate_used_token_custom_claims(decoded_access_token, req)
         if validation_result.invalid?
           logger.warn("Attempted to access with invalid used token: #{validation_result.full_error_message}")
-          return unauthorized_response(req)
+          return redirect_to_authenticate_or_unauthorized_response(req)
         end
 
         if (refresh_at = decoded_access_token[0]["idsimple.refresh_at"]) && refresh_at < Time.now.to_i
@@ -54,7 +54,7 @@ module Idsimple
         end
       rescue JWT::DecodeError => e
         logger.warn("Error while decoding token: #{e.class} - #{e.message}")
-        unauthorized_response(req)
+        redirect_to_authenticate_or_unauthorized_response(req)
       end
 
       private
@@ -64,7 +64,7 @@ module Idsimple
 
         if token_refresh_response.fail?
           logger.warn("Token refresh failed")
-          unauthorized_response(req)
+          redirect_to_authenticate_or_unauthorized_response(req)
         else
           logger.debug("Refreshed access token")
           new_access_token = token_refresh_response.body["access_token"]
