@@ -25,51 +25,16 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
     Idsimple::Rack.configure do |config|
       config.logger = logger
       config.signing_secret = signing_secret
+      config.app_id = "123"
     end
   end
 
   after { Idsimple::Rack.reset_configuration }
 
   describe "#call" do
-    it "returns unauthorized response when not authenticated" do
-      get "/"
-      expect(last_response.unauthorized?).to be true
-    end
-
     it "skips validator middleware when attempting to authenticate" do
       expect(logger).to receive(:debug).with("Attempting to authenticate. Skipping validation.")
       get authenticate_path
-      expect(last_response.unauthorized?).to be true
-    end
-
-    it "skips validator middleware when Configuration#skip_on returns true" do
-      configuration.skip_on = ->(req) {
-        req.path == "/skip"
-      }
-
-      expect(logger).to receive(:debug).with("Skipping validator due to skip_on rules")
-      get "/skip"
-      expect(last_response.ok?).to be true
-      expect(last_response.body).to eq("OK")
-
-      get "/"
-      expect(last_response.unauthorized?).to be true
-    end
-
-
-    it "returns unauthorized response when custom claim validation fails" do
-      authenticate
-
-      expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_used_token_custom_claims) do
-        result = Idsimple::Rack::AccessTokenValidationResult.new
-        result.add_error("This is an error")
-        result
-      end
-
-      expect(logger).to receive(:warn).with("Attempted to access with invalid used token: This is an error.")
-
-      follow_redirect!
-
       expect(last_response.unauthorized?).to be true
     end
 
@@ -107,25 +72,128 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       end
     end
 
-    it "returns unauthorized when token refresh fails" do
-      Timecop.freeze(Time.now) do
-        refresh_at = Time.now + 60
-        payload = authenticate("idsimple.refresh_at" => refresh_at.to_i)
+    context "with redirect to authenticate" do
+      it "redirects to authenticate when not authenticated" do
+        get "/"
+        expect(last_response.redirect?).to be true
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+      end
 
-        follow_redirect!
+      it "skips validator middleware when Configuration#skip_on returns true" do
+        configuration.skip_on = ->(req) {
+          req.path == "/skip"
+        }
+
+        expect(logger).to receive(:debug).with("Skipping validator due to skip_on rules")
+        get "/skip"
         expect(last_response.ok?).to be true
         expect(last_response.body).to eq("OK")
 
-        Timecop.travel(refresh_at + 2*60)
+        get "/"
+        expect(last_response.redirect?).to be true
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+      end
 
-        new_payload = payload.merge("idsimple.refresh_at" => (Time.now + 60).to_i)
-        expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
-          mocked_api_result(422, { "errors" => ["An error occurred"] })
+      it "returns redirect to authenticate when custom claim validation fails" do
+        authenticate
+
+        expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_used_token_custom_claims) do
+          result = Idsimple::Rack::AccessTokenValidationResult.new
+          result.add_error("This is an error")
+          result
         end
 
+        expect(logger).to receive(:warn).with("Attempted to access with invalid used token: This is an error.")
+
+        follow_redirect!
+
+        expect(last_response.redirect?).to be true
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+      end
+
+      it "returns redirect to authenticate when token refresh fails" do
+        Timecop.freeze(Time.now) do
+          refresh_at = Time.now + 60
+          payload = authenticate("idsimple.refresh_at" => refresh_at.to_i)
+
+          follow_redirect!
+          expect(last_response.ok?).to be true
+          expect(last_response.body).to eq("OK")
+
+          Timecop.travel(refresh_at + 2*60)
+
+          new_payload = payload.merge("idsimple.refresh_at" => (Time.now + 60).to_i)
+          expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
+            mocked_api_result(422, { "errors" => ["An error occurred"] })
+          end
+
+          get "/"
+
+          expect(last_response.redirect?).to be true
+          expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+        end
+      end
+    end
+
+    context "without redirect to authenticate" do
+      before { configuration.redirect_to_authenticate = false }
+
+      it "returns unauthorized response when not authenticated" do
         get "/"
+        expect(last_response.unauthorized?).to be true
+      end
+
+      it "skips validator middleware when Configuration#skip_on returns true" do
+        configuration.skip_on = ->(req) {
+          req.path == "/skip"
+        }
+
+        expect(logger).to receive(:debug).with("Skipping validator due to skip_on rules")
+        get "/skip"
+        expect(last_response.ok?).to be true
+        expect(last_response.body).to eq("OK")
+
+        get "/"
+        expect(last_response.unauthorized?).to be true
+      end
+
+
+      it "returns unauthorized response when custom claim validation fails" do
+        authenticate
+
+        expect(Idsimple::Rack::AccessTokenValidator).to receive(:validate_used_token_custom_claims) do
+          result = Idsimple::Rack::AccessTokenValidationResult.new
+          result.add_error("This is an error")
+          result
+        end
+
+        expect(logger).to receive(:warn).with("Attempted to access with invalid used token: This is an error.")
+
+        follow_redirect!
 
         expect(last_response.unauthorized?).to be true
+      end
+
+      it "returns unauthorized when token refresh fails" do
+        Timecop.freeze(Time.now) do
+          refresh_at = Time.now + 60
+          payload = authenticate("idsimple.refresh_at" => refresh_at.to_i)
+
+          follow_redirect!
+          expect(last_response.ok?).to be true
+          expect(last_response.body).to eq("OK")
+
+          Timecop.travel(refresh_at + 2*60)
+
+          new_payload = payload.merge("idsimple.refresh_at" => (Time.now + 60).to_i)
+          expect_any_instance_of(Idsimple::Rack::Api).to receive(:refresh_token) do
+            mocked_api_result(422, { "errors" => ["An error occurred"] })
+          end
+
+          get "/"
+
+          expect(last_response.unauthorized?).to be true
+        end
       end
     end
 
