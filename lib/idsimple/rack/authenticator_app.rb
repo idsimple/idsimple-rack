@@ -34,7 +34,8 @@ module Idsimple
           new_decoded_access_token = decode_access_token(new_access_token, signing_secret)
 
           res = ::Rack::Response.new
-          res.redirect(configuration.after_authenticated_path)
+          return_to = req.params["return_to"]
+          res.redirect(return_to || configuration.after_authenticated_path)
           set_access_token(req, res, new_access_token, new_decoded_access_token)
           res.finish
         else
