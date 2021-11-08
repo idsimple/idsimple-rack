@@ -75,7 +75,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       it "redirects to authenticate when not authenticated" do
         get "/"
         expect(last_response.redirect?).to be true
-        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access?return_to=/")
       end
 
       it "skips validator middleware when Configuration#skip_on returns true" do
@@ -90,7 +90,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
 
         get "/"
         expect(last_response.redirect?).to be true
-        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access?return_to=/")
       end
 
       it "returns redirect to authenticate when custom claim validation fails" do
@@ -107,7 +107,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
         follow_redirect!
 
         expect(last_response.redirect?).to be true
-        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+        expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access?return_to=/")
       end
 
       it "returns redirect to authenticate when token refresh fails" do
@@ -129,7 +129,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
           get "/"
 
           expect(last_response.redirect?).to be true
-          expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access")
+          expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access?return_to=/")
         end
       end
     end
