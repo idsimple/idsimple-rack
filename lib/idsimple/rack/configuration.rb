@@ -49,7 +49,7 @@ module Idsimple
       def default_unauthorized_response(req, res)
         res.status = 401
         res.content_type = "text/html"
-        res.body = "UNAUTHORIZED"
+        res.body = ["UNAUTHORIZED"]
       end
 
       def default_access_token_getter(req)
