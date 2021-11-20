@@ -19,9 +19,7 @@ Idsimple::Rack.configure do |config|
   config.api_key = ENV["API_KEY"]
   config.issuer = "http://localhost:3000"
   config.api_base_url = "http://localhost:3000"
-  logger = Logger.new(STDOUT)
-  logger.level = Logger::DEBUG
-  config.logger = logger
+  config.logger.level = Logger::DEBUG
 end
 
 App = Rack::Builder.new do
