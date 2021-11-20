@@ -6,7 +6,7 @@ module Idsimple
     class Railtie < ::Rails::Engine
       initializer "idsimple-rack.configure" do |app|
         app.routes.append do
-          mount Idsimple::RackPlugin::AuthenticatorApp
+          mount Idsimple::Rack::AuthenticatorApp, at: Idsimple::Rack.configuration.authenticate_path
         end
 
         app.middleware.use(Idsimple::Rack::ValidatorMiddleware)
