@@ -35,8 +35,14 @@ module Idsimple
         @set_access_token = method(:default_access_token_setter)
         @unauthorized_response = method(:default_unauthorized_response)
         @redirect_to_authenticate = true
-        @logger = Logger.new(STDOUT)
-        @logger.level = Logger::INFO
+
+        logger = Logger.new(STDOUT)
+        logger.level = Logger::INFO
+        default_formatter = Logger::Formatter.new
+        logger.formatter = proc do |severity, datetime, progname, msg|
+          "Idsimple::Rack #{default_formatter.call(severity, datetime, progname, msg)}"
+        end
+        @logger = logger
       end
 
       def default_unauthorized_response(req)
