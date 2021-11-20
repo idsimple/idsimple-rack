@@ -6,7 +6,7 @@ module Idsimple
     class Configuration
       DEFAULT_COOKIE_NAME = "idsimple.access_token"
 
-      attr_accessor :get_access_token, :set_access_token, :signing_secret,
+      attr_accessor :get_access_token, :set_access_token, :remove_access_token, :signing_secret,
         :authenticate_path, :issuer, :api_base_url, :after_authenticated_path,
         :app_id, :skip_on, :logger, :enabled, :unauthorized_response, :api_key,
         :redirect_to_authenticate
@@ -33,6 +33,7 @@ module Idsimple
         @api_key = nil
         @get_access_token = method(:default_access_token_getter)
         @set_access_token = method(:default_access_token_setter)
+        @remove_access_token = method(:default_access_token_remover)
         @unauthorized_response = method(:default_unauthorized_response)
         @redirect_to_authenticate = true
 
@@ -45,8 +46,10 @@ module Idsimple
         @logger = logger
       end
 
-      def default_unauthorized_response(req)
-        ["401", { "Content-Type" => "text/html" }, ["UNAUTHORIZED"]]
+      def default_unauthorized_response(req, res)
+        res.status = 401
+        res.content_type = "text/html"
+        res.body = ["UNAUTHORIZED"]
       end
 
       def default_access_token_getter(req)
@@ -60,6 +63,10 @@ module Idsimple
           httponly: true,
           path: "/"
         })
+      end
+
+      def default_access_token_remover(req, res)
+        res.delete_cookie(DEFAULT_COOKIE_NAME)
       end
     end
   end
