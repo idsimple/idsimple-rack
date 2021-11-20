@@ -23,12 +23,12 @@ module Idsimple
       end
 
       def use_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/use", "", headers)
+        response = http_client.patch("/api/v1/access_tokens/#{token_id}/use", "", headers)
         Result.new(response)
       end
 
       def refresh_token(token_id)
-        response = http_client.patch("/api/v1/sessions/#{token_id}/refresh", "", headers)
+        response = http_client.patch("/api/v1/access_tokens/#{token_id}/refresh", "", headers)
         Result.new(response)
       end
 
