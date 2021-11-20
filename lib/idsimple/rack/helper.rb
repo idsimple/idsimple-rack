@@ -40,7 +40,7 @@ module Idsimple
       end
 
       def remove_access_token(req, res)
-        configuration.remove_access_token(req, res)
+        configuration.remove_access_token.call(req, res)
       end
 
       def decode_access_token(access_token, signing_secret)
