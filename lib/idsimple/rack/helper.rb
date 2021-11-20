@@ -16,16 +16,18 @@ module Idsimple
         configuration.signing_secret
       end
 
-      def unauthorized_response(req)
-        configuration.unauthorized_response.call(req)
+      def unauthorized_response(req, res = ::Rack::Response.new)
+        configuration.unauthorized_response.call(req, res)
+        res.finish
       end
 
-      def redirect_to_authenticate_or_unauthorized_response(req)
+      def redirect_to_authenticate_or_unauthorized_response(req, res = ::Rack::Response.new)
         if configuration.redirect_to_authenticate
           access_url = "#{configuration.issuer}/apps/#{configuration.app_id}/access?return_to=#{req.fullpath}"
-          return ["302", { "Content-Type" => "text/html", "Location" => access_url }, []]
+          res.redirect(access_url)
+          res.finish
         else
-          unauthorized_response(req)
+          unauthorized_response(req, res)
         end
       end
 
@@ -35,6 +37,10 @@ module Idsimple
 
       def set_access_token(req, res, new_access_token, new_decoded_access_token)
         configuration.set_access_token.call(req, res, new_access_token, new_decoded_access_token)
+      end
+
+      def remove_access_token(req, res)
+        configuration.remove_access_token(req, res)
       end
 
       def decode_access_token(access_token, signing_secret)

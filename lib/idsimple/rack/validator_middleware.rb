@@ -64,7 +64,13 @@ module Idsimple
 
         if token_refresh_response.fail?
           logger.warn("Token refresh failed")
-          redirect_to_authenticate_or_unauthorized_response(req)
+
+          res = ::Rack::Response.new
+          if token_refresh_response.body["invalid_token"]
+            remove_access_token(req, res)
+          end
+
+          redirect_to_authenticate_or_unauthorized_response(req, res)
         else
           logger.debug("Refreshed access token")
           new_access_token = token_refresh_response.body["access_token"]
