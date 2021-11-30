@@ -19,7 +19,7 @@ This includes:
 All you need is the [idsimple-rack gem](https://github.com/idsimple/idsimple-rack).
 `idsimple-rack` includes a [Rack app](https://github.com/rack/rack/blob/master/SPEC.rdoc#rack-applications-),
 `Idsimple::Rack::AuthenticatorApp`, for authenticating users and initiating sessions
-and a Rack middleware, `Idsimple::Rack::ValidatorMiddleware`, for validating access tokens and ongoing sessions.
+and a Rack middleware, `Idsimple::Rack::ValidatorMiddleware`, for validating access tokens and sessions.
 
 ## Installation
 
