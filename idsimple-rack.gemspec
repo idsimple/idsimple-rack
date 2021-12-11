@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.name          = "idsimple-rack"
   spec.version       = Idsimple::Rack::VERSION
   spec.authors       = ["Ari Summer"]
-  spec.email         = [""]
+  spec.email         = ["support@idsimple.io"]
 
   spec.summary       = "Rack middleware for idsimple integration."
   spec.homepage      = "https://github.com/idsimple/idsimple-rack"
