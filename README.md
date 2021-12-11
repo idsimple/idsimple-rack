@@ -50,8 +50,8 @@ All you need to do is add an initializer with your [configuration options](#conf
 
 Idsimple::Rack.configure do |config|
   config.app_id = ENV["IDSIMPLE_APP_ID"]
-  config.signing_secret = ENV["IDSIMPLE_SIGNING_SECRET"]
   config.api_key = ENV["IDSIMPLE_API_KEY"]
+  config.signing_secret = ENV["IDSIMPLE_SIGNING_SECRET"]
 end
 ```
 
@@ -74,9 +74,9 @@ class Application
 end
 
 Idsimple::Rack.configure do |config|
-  config.app_id = ENV["APP_ID"]
-  config.signing_secret = ENV["SIGNING_SECRET"]
-  config.api_key = ENV["API_KEY"]
+  config.app_id = ENV["IDSIMPLE_APP_ID"]
+  config.api_key = ENV["IDSIMPLE_API_KEY"]
+  config.signing_secret = ENV["IDSIMPLE_SIGNING_SECRET"]
 end
 
 App = Rack::Builder.new do
@@ -104,8 +104,8 @@ You can see a working example of this in the
 ```ruby
 Idsimple::Rack.configure do |config|
   config.app_id = ENV["IDSIMPLE_APP_ID"]
-  config.signing_secret = ENV["IDSIMPLE_SIGNING_SECRET"]
   config.api_key = ENV["IDSIMPLE_API_KEY"]
+  config.signing_secret = ENV["IDSIMPLE_SIGNING_SECRET"]
 end
 ```
 
@@ -116,17 +116,17 @@ The idsimple App ID. This can be found in the "Keys & Secrets" tab for your app 
 - Type: String
 - Optional: No
 
-#### `signing_secret`
-The idsimple App signing secret. This is generated and shown when you create an idsimple app.
-You can view the prefix of the signing secret in the "Keys & Secrets" tab for your app in idsimple.
-
-- Type: String
-- Optional: No
-
 
 #### `api_key`
 The idsimple App Session API Key. This is generated and shown when you create an idsimple app.
 You can view the prefix of the App Session API Key in the "Keys & Secrets" tab for your app in idsimple.
+
+- Type: String
+- Optional: No
+
+#### `signing_secret`
+The idsimple App signing secret. This is generated and shown when you create an idsimple app.
+You can view the prefix of the signing secret in the "Keys & Secrets" tab for your app in idsimple.
 
 - Type: String
 - Optional: No
