@@ -77,9 +77,6 @@ Idsimple::Rack.configure do |config|
   config.app_id = ENV["APP_ID"]
   config.signing_secret = ENV["SIGNING_SECRET"]
   config.api_key = ENV["API_KEY"]
-  config.issuer = "http://localhost:3000"
-  config.api_base_url = "http://localhost:3000"
-  config.logger.level = Logger::DEBUG
 end
 
 App = Rack::Builder.new do
