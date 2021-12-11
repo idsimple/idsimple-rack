@@ -10,12 +10,14 @@ GEM
   specs:
     jwt (2.3.0)
     rack (2.2.3)
+    webrick (1.7.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   idsimple-rack!
+  webrick
 
 BUNDLED WITH
    2.1.4
