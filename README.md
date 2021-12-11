@@ -1,5 +1,7 @@
 # Idsimple::Rack
 
+[![Gem Version](https://badge.fury.io/rb/idsimple-rack.svg)](https://badge.fury.io/rb/idsimple-rack)
+
 ## Overview
 Idsimple works with all [Rack](https://github.com/rack/rack)-based applications.
 This includes:
