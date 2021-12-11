@@ -93,6 +93,27 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
         expect(last_response.location).to eq("https://app.idsimple.com/apps/123/access?return_to=/")
       end
 
+      it "skips redirection when referrer is issuer" do
+        header "Referer", configuration.issuer
+        get "/"
+        expect(last_response.redirect?).to be false
+        expect(last_response.unauthorized?).to be true
+      end
+
+      it "skips rediection when issuer is missing" do
+        configuration.issuer = nil
+        get "/"
+        expect(last_response.redirect?).to be false
+        expect(last_response.unauthorized?).to be true
+      end
+
+      it "skips rediection when app_id is missing" do
+        configuration.app_id = nil
+        get "/"
+        expect(last_response.redirect?).to be false
+        expect(last_response.unauthorized?).to be true
+      end
+
       it "returns redirect to authenticate when custom claim validation fails" do
         authenticate
 
