@@ -94,8 +94,7 @@ RSpec.describe Idsimple::Rack::ValidatorMiddleware do
       end
 
       it "skips redirection when referrer is issuer" do
-        header "Referer", configuration.issuer
-        get "/"
+        get "/?idsimple_access_attempt=1"
         expect(last_response.redirect?).to be false
         expect(last_response.unauthorized?).to be true
       end

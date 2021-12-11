@@ -25,10 +25,9 @@ module Idsimple
       def redirect_to_authenticate_or_unauthorized_response(req, res = ::Rack::Response.new)
         issuer = configuration.issuer
         app_id = configuration.app_id
-        referrer = req.referer
-        referred_from_issuer = issuer && referrer && referrer.start_with?(configuration.issuer)
+        access_attempt = req.params["idsimple_access_attempt"]
 
-        if configuration.redirect_to_authenticate && issuer && app_id && !referred_from_issuer
+        if configuration.redirect_to_authenticate && issuer && app_id && !access_attempt
           logger.info("Redirecting to authenticate")
           access_url = "#{issuer}/apps/#{app_id}/access?return_to=#{req.fullpath}"
           res.redirect(access_url)
