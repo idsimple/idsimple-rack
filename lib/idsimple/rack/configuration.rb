@@ -25,8 +25,8 @@ module Idsimple
         @enabled = true
         @authenticate_path = "/idsimple/session"
         @after_authenticated_path = "/"
-        @issuer = "https://app.idsimple.com"
-        @api_base_url = "https://api.idsimple.com"
+        @issuer = "https://app.idsimple.io"
+        @api_base_url = "https://api.idsimple.io"
         @app_id = nil
         @skip_on = nil
         @signing_secret = nil
