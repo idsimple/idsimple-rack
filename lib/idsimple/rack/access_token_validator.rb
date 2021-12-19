@@ -12,11 +12,11 @@ module Idsimple
         result = AccessTokenValidationResult.new
 
         if ip && req.ip != ip
-          result.add_error("IP mismatch")
+          result.add_error("IP mismatch - Expected: #{ip} Actual: #{req.ip}")
         end
 
         if user_agent && req.user_agent != user_agent
-          result.add_error("User agent mismatch")
+          result.add_error("User agent mismatch - Expected: #{user_agent} Actual: #{req.user_agent}")
         end
 
         result.add_error("Missing used_at timestamp") if !used_at
@@ -35,11 +35,11 @@ module Idsimple
         result = AccessTokenValidationResult.new
 
         if ip && req.ip != ip
-          result.add_error("IP mismatch")
+          result.add_error("IP mismatch - Expected: #{ip} Actual: #{req.ip}")
         end
 
         if user_agent && req.user_agent != user_agent
-          result.add_error("User agent mismatch")
+          result.add_error("User agent mismatch - Expected: #{user_agent} Actual: #{req.user_agent}")
         end
 
         if use_by && Time.now.to_i > use_by
