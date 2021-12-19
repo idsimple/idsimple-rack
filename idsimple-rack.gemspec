@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["support@idsimple.io"]
 
   spec.summary       = "Rack middleware for idsimple integration."
-  spec.homepage      = "https://github.com/idsimple/idsimple-rack"
+  spec.homepage      = "https://idsimple.io"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 
