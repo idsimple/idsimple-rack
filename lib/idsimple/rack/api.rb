@@ -4,10 +4,11 @@ require "json"
 module Idsimple
   module Rack
     class Api
-      attr_reader :base_url
+      attr_reader :base_url, :base_path
 
-      def initialize(base_url, api_key)
+      def initialize(base_url, base_path, api_key)
         @base_url = base_url
+        @base_path = base_path
         @api_key = api_key
       end
 
@@ -23,12 +24,12 @@ module Idsimple
       end
 
       def use_token(token_id)
-        response = http_client.patch("/api/v1/access_tokens/#{token_id}/use", "", headers)
+        response = http_client.patch("#{base_path}/access_tokens/#{token_id}/use", "", headers)
         Result.new(response)
       end
 
       def refresh_token(token_id)
-        response = http_client.patch("/api/v1/access_tokens/#{token_id}/refresh", "", headers)
+        response = http_client.patch("#{base_path}/access_tokens/#{token_id}/refresh", "", headers)
         Result.new(response)
       end
 

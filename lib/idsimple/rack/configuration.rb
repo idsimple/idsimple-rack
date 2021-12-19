@@ -7,7 +7,7 @@ module Idsimple
       DEFAULT_COOKIE_NAME = "idsimple.access_token"
 
       attr_accessor :get_access_token, :set_access_token, :remove_access_token, :signing_secret,
-        :authenticate_path, :issuer, :api_base_url, :after_authenticated_path,
+        :authenticate_path, :issuer, :api_base_url, :api_base_path, :after_authenticated_path,
         :app_id, :skip_on, :logger, :enabled, :unauthorized_response, :api_key,
         :redirect_to_authenticate
 
@@ -27,6 +27,7 @@ module Idsimple
         @after_authenticated_path = "/"
         @issuer = "https://app.idsimple.io"
         @api_base_url = "https://api.idsimple.io"
+        @api_base_path = "/v1"
         @app_id = nil
         @skip_on = nil
         @signing_secret = nil
