@@ -57,6 +57,8 @@ Idsimple::Rack.configure do |config|
 end
 ```
 
+You can find a simple Rails demo [here](https://github.com/idsimple/idsimple_rails_demo).
+
 ## Rack
 To add `idsimple-rack` to a Rack application, you need to `run` `Idsimple::Rack::AuthenticatorApp`,
 at `Idsimple::Rack.configuration.authenticate_path`, `use` `Idsimple::Rack::ValidatorMiddleware` in your stack,
